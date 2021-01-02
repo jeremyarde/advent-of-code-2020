@@ -1,66 +1,83 @@
 use std::{
-    collections::{HashMap, HashSet, VecDeque},
+    collections::{HashMap, HashSet},
     fs, vec,
 };
-#[derive(Debug, Clone, Copy)]
-struct Node {
-    value: u32,
-    next: usize,
-}
 
 fn main() {
-    // let nodes: Vec<Node> = Vec::new();
-    let mut nodes = "389125467"
-        .chars()
-        .into_iter()
-        .enumerate()
-        .map(|(i, x)| Node {
-            value: x.to_digit(10).unwrap(),
-            next: i + 1,
-        })
-        .collect::<Vec<Node>>();
+    let filename = "inputs/q19_input_test.txt";
+    let contents = fs::read_to_string(filename).expect("Could not read the file");
 
-    let mut templast = nodes.last_mut().unwrap();
-    templast.next = 0;
+    let mut contents: Vec<String> = contents.lines().map(|x| String::from(x)).collect();
 
-    println!("{:?}", nodes);
-    let moves = 10;
+    let rules: Vec<&str> = vec![];
+    let mut rulemap: HashMap<String, String> = HashMap::new();
+    let mut lettermap: HashMap<String, String> = HashMap::new();
+    let mut rule_contents: HashMap<String, String> = HashMap::new();
+    for line in &contents {
+        println!("{:?}", line);
+        let mut split_rule: Vec<String> = line.split(": ").map(|x| String::from(x)).collect();
+        let mut rule_num = split_rule.iter().nth(0).unwrap().clone();
+        let mut rule = split_rule.iter().nth(1).unwrap();
 
-    let mut curr_dest = 0;
-    let mut curr_cup = 0;
-    let mut previous_cup: Node;
-    for x in 0..moves {
-        let nodes_snapshot = nodes.clone();
-        println!("Turn: {:?}", x);
-        let prev_curr_cup = curr_cup;
-        previous_cup = nodes_snapshot.get(prev_curr_cup).unwrap().clone();
-
-        let mut skip_start = nodes_snapshot.get(prev_curr_cup).unwrap();
-        let mut skip_end = 0;
-
-        let mut three_cups = vec![];
-        for jump in 1..=3 {
-            // match jump {
-            //     3 => {
-            //         skip_end = nodes_snapshot.get(curr_cup).unwrap().next;
-            //         curr_cup = nodes_snapshot.get(skip_end).unwrap().next;
-            //     }
-            //     _ => {
-            //         curr_cup = nodes_snapshot.get(curr_cup).unwrap().next;
-            //     }
-            // }
-            curr_cup = nodes_snapshot.get(curr_cup).unwrap().next;
-            three_cups.push(nodes_snapshot.get(curr_cup).unwrap().clone());
+        if rule.contains("\"") {
+            lettermap.insert(
+                rule_num.parse().unwrap(),
+                rule.to_string().replace("\"", ""),
+            );
         }
-        // let mut third_cup = curr_cup;
-        println!("skip_start: {:?}, skip_end: {:?}", &skip_start, &skip_end);
-        println!("prev: {:?}, curr: {:?}", &prev_curr_cup, &curr_cup);
-
-        println!("three cups: {:?}", &three_cups);
-
-        // select destination
-        while 
-
-        break;
+        rulemap.insert(rule_num, rule.to_string());
+        // println!("{:?}, {:?}", rule_num, rule);
     }
+
+    // loop while a digit in rule 0
+    // loop {
+    let bad_chars = ('0'..'9').collect::<HashSet<char>>();
+    // .iter().collect::<HashSet<char>>();
+    // while rulemap
+    //     .get("0")
+    //     .unwrap()
+    //     .chars()
+    //     .collect::<HashSet<char>>()
+    //     .intersection(&bad_chars)
+    //     .collect::<Vec<char>>()
+    //     .len()
+    //     > 0
+    // {
+    // loop {
+    while rulemap.get("0").unwrap().chars().any(char::is_numeric) {
+        println!("rulemap: {:?}", &rulemap);
+        // println!("curr contents: {:?}", &contents);
+        println!("lettermap: {:?}", &lettermap);
+
+        let rulemap_keys = rulemap
+            .keys()
+            .map(|x| x.clone())
+            .collect::<Vec<String>>()
+            .clone();
+        for key in rulemap_keys {
+            // replace values in rules with letters
+            for (letter_key, letter_value) in lettermap.iter_mut() {
+                *rulemap.get_mut(&key).unwrap() = rulemap
+                    .get_mut(&key)
+                    .unwrap()
+                    .replace(letter_key, letter_value);
+            }
+
+            // Go through all rulemap values, if no digits in chars,
+            //we need to add it to the lettermap
+            for (key, value) in &rulemap {
+
+                // if no digits
+                //  if '|', copy other value, replace with 0, replace with 1, combine with | again
+            }
+        }
+        println!("rulemap after sub{:#?}", rulemap);
+        // break;
+    }
+
+    // Check if any value contains the '0'..'9' chars,
+    // and if yes, we keep in the lines, otherwise move to map
+    // also keep in mind '|' and how that works
+
+    // println!("Rule map: {:?}\nLettermap: {:?}", rulemap, lettermap);
 }
